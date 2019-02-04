@@ -2,7 +2,7 @@ import { Cloak } from '../characters/cloak';
 
 export class GameScene extends Phaser.Scene {
   /** background */
-  private skyBackground: Phaser.GameObjects.TileSprite;
+  private skyBackground: Phaser.GameObjects.Image;
   private mountainsFarBackground: Phaser.GameObjects.TileSprite;
   private mountainsNearBackground: Phaser.GameObjects.TileSprite;
   private castleBackground: Phaser.GameObjects.TileSprite;
@@ -55,34 +55,35 @@ export class GameScene extends Phaser.Scene {
       tileHeight: 32,
     });
 
+    //tilemap modifiers for scaling
+    const darkForestWidthMod = this.darkForestMap.widthInPixels * 0.5;
+    const darkForestHeightMod = this.darkForestMap.heightInPixels * 0.5;
+
     /** create background images */
-    this.skyBackground = this.add.tileSprite(
-      400,
-      240,
-      this.darkForestMap.widthInPixels,
-      this.darkForestMap.heightInPixels,
-      'sky-background'
-    );
-    this.mountainsFarBackground = this.add.tileSprite(
-      400,
-      240,
-      this.darkForestMap.widthInPixels,
-      this.darkForestMap.heightInPixels,
-      'mountains-far-background'
-    );
-    this.mountainsNearBackground = this.add.tileSprite(
-      400,
-      240,
-      this.darkForestMap.widthInPixels,
-      this.darkForestMap.heightInPixels,
-      'mountains-near-background'
-    );
-    this.moonBackground = this.add.tileSprite(400, 240, 800, 480, 'moon-background');
-    this.moonBackground.scrollFactorX = 0.05;
-    this.castleBackground = this.add.tileSprite(400, 240, 800, 480, 'castle-background');
+    this.skyBackground = this.add.image(darkForestWidthMod, darkForestHeightMod, 'sky-background');
+    this.skyBackground.setDisplaySize(this.darkForestMap.widthInPixels, this.darkForestMap.heightInPixels);
+
+    // this.mountainsFarBackground = this.add.tileSprite(
+    //   400,
+    //   240,
+    //   this.darkForestMap.widthInPixels,
+    //   this.darkForestMap.heightInPixels,
+    //   'mountains-far-background'
+    // );
+    // this.mountainsNearBackground = this.add.tileSprite(
+    //   400,
+    //   240,
+    //   this.darkForestMap.widthInPixels,
+    //   this.darkForestMap.heightInPixels,
+    //   'mountains-near-background'
+    // );
+    this.moonBackground = this.add.tileSprite(400, 240, 800, this.darkForestMap.heightInPixels, 'moon-background');
+    this.moonBackground.scrollFactorX = 0.1;
+    this.castleBackground = this.add.tileSprite(400, 240, 800, this.darkForestMap.heightInPixels, 'castle-background');
+    this.castleBackground.scrollFactorX = 0.05;
     this.bushesBackground = this.add.tileSprite(
-      400,
-      240,
+      darkForestWidthMod,
+      darkForestHeightMod,
       this.darkForestMap.widthInPixels,
       this.darkForestMap.heightInPixels,
       'bushes-background'
@@ -130,7 +131,8 @@ export class GameScene extends Phaser.Scene {
 
     // this.mountainsFarBackground.tilePositionX += 0.05;
     // this.mountainsNearBackground.tilePositionX += 0.1;
-    this.mountainsFarBackground.setTilePosition(this.cameras.main.scrollX / 16, 0);
-    this.mountainsNearBackground.setTilePosition(this.cameras.main.scrollX / 8, 0);
+    //this.mountainsFarBackground.setTilePosition(this.cameras.main.scrollX / 16, 0);
+    //this.mountainsNearBackground.setTilePosition(this.cameras.main.scrollX / 8, 0);
+    this.moonBackground.tilePositionX += 0.01;
   }
 }
