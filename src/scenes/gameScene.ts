@@ -1,4 +1,5 @@
 import { Cloak } from '../characters/cloak';
+import { Goblin } from '../characters/goblin';
 
 export class GameScene extends Phaser.Scene {
   /** background */
@@ -19,6 +20,7 @@ export class GameScene extends Phaser.Scene {
 
   /** characters */
   private cloak: Cloak;
+  private goblin: Goblin;
 
   constructor() {
     super({
@@ -44,6 +46,11 @@ export class GameScene extends Phaser.Scene {
     this.load.spritesheet('cloak', './src/assets/characters/cloak.png', {
       frameWidth: 32,
       frameHeight: 48,
+    });
+
+    this.load.spritesheet('goblin', './src/assets/characters/goblin.png', {
+      frameWidth: 64,
+      frameHeight: 64,
     });
   }
 
@@ -101,10 +108,18 @@ export class GameScene extends Phaser.Scene {
     /** create characters */
     this.cloak = new Cloak({
       scene: this,
-      x: 32,
+      x: 320,
       //y: 336,
       y: 300,
       key: 'cloak',
+    });
+
+    this.goblin = new Goblin({
+      scene: this,
+      x: 550,
+      y: 200,
+      key: 'goblin',
+      player: this.cloak,
     });
 
     /** physics */
@@ -121,6 +136,8 @@ export class GameScene extends Phaser.Scene {
     );
     // cloak collider
     this.physics.add.collider(this.cloak, this.collisionTileLayer);
+    //goblin collider
+    this.physics.add.collider(this.goblin, this.collisionTileLayer);
 
     // set up camera
     this.cameras.main.setBounds(0, 0, this.darkForestMap.widthInPixels, this.darkForestMap.heightInPixels);
@@ -128,6 +145,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.cloak.update();
+    this.goblin.update();
 
     // this.mountainsFarBackground.tilePositionX += 0.05;
     // this.mountainsNearBackground.tilePositionX += 0.1;
