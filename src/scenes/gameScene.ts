@@ -48,8 +48,8 @@ export class GameScene extends Phaser.Scene {
       frameHeight: 48,
     });
 
-    this.load.spritesheet('goblin', './src/assets/characters/goblin.png', {
-      frameWidth: 64,
+    this.load.spritesheet('goblin', './src/assets/characters/goblin-64.png', {
+      frameWidth: 76,
       frameHeight: 64,
     });
   }
