@@ -22,6 +22,9 @@ export class GameScene extends Phaser.Scene {
   private cloak: Cloak;
   private goblin: Goblin;
 
+  /** objects */
+  private fire: Phaser.GameObjects.Sprite;
+
   constructor() {
     super({
       key: 'GameScene',
@@ -50,6 +53,12 @@ export class GameScene extends Phaser.Scene {
 
     this.load.spritesheet('goblin', './src/assets/characters/goblin-64.png', {
       frameWidth: 76,
+      frameHeight: 64,
+    });
+
+    /** load object images */
+    this.load.spritesheet('fire', './src/assets/objects/goblin-fire-64.png', {
+      frameWidth: 82,
       frameHeight: 64,
     });
   }
@@ -104,6 +113,17 @@ export class GameScene extends Phaser.Scene {
     this.collisionTileLayer = this.darkForestMap.createStaticLayer('collisionLayer', this.collisionTileset, 0, 0);
     this.darkForestMap.setCollisionByExclusion([-1], true, false);
     this.collisionTileLayer.visible = false;
+
+    /** create objects */
+    this.fire = this.add.sprite(525, 320, 'fire');
+    this.anims.create({
+      key: 'fire-flicker',
+      frames: this.anims.generateFrameNumbers('fire', { start: 0, end: 2 }),
+      duration: 600,
+      repeat: -1,
+    });
+
+    this.fire.anims.play('fire-flicker', true);
 
     /** create characters */
     this.cloak = new Cloak({
