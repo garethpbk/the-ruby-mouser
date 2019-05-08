@@ -31,21 +31,21 @@ export class Goblin extends Phaser.GameObjects.Sprite {
 
   private initAnims(): void {
     this.currentScene.anims.create({
-      key: 'idle',
+      key: 'goblinIdle',
       frames: this.currentScene.anims.generateFrameNumbers('goblin', { start: 0, end: 3 }),
       frameRate: 3,
       repeat: -1,
     });
 
     this.currentScene.anims.create({
-      key: 'run',
+      key: 'goblinRun',
       frames: this.currentScene.anims.generateFrameNumbers('goblin', { start: 4, end: 7 }),
       frameRate: 4,
       repeat: 1,
     });
 
     this.currentScene.anims.create({
-      key: 'attack',
+      key: 'goblinAttack',
       frames: this.currentScene.anims.generateFrameNumbers('goblin', { start: 8, end: 14 }),
       duration: 800,
       repeat: 1,
@@ -53,12 +53,12 @@ export class Goblin extends Phaser.GameObjects.Sprite {
   }
 
   private setIdle(): void {
-    this.anims.playReverse('idle', true);
+    this.anims.playReverse('goblinIdle', true);
     this.body.setVelocityX(0);
   }
 
   private setRunning(direction): void {
-    this.anims.play('run', true);
+    this.anims.play('goblinRun', true);
 
     if (direction == 'right') {
       this.flipX = false;
@@ -79,7 +79,7 @@ export class Goblin extends Phaser.GameObjects.Sprite {
   }
 
   private setAttacking(direction, distance): void {
-    this.anims.play('attack', true);
+    this.anims.play('goblinAttack', true);
     this.body.setVelocityX(0);
 
     if (direction == 'right') {
