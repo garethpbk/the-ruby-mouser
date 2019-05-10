@@ -2,6 +2,9 @@ import { Cloak } from '../characters/cloak';
 import { Goblin } from '../characters/goblin';
 import { GoblinWizard } from '../characters/goblinWizard';
 
+// import props
+import { GoblinFire, StaticProp } from '../props';
+
 export class GameScene extends Phaser.Scene {
   /** background */
   private skyBackground: Phaser.GameObjects.Image;
@@ -25,7 +28,9 @@ export class GameScene extends Phaser.Scene {
   private goblinWizard: GoblinWizard;
 
   /** objects */
-  private fire: Phaser.GameObjects.Sprite;
+  private deadTree: StaticProp;
+  private goblinFire: GoblinFire;
+  private grave: StaticProp;
 
   constructor() {
     super({
@@ -63,8 +68,11 @@ export class GameScene extends Phaser.Scene {
       frameHeight: 64,
     });
 
-    /** load object images */
-    this.load.spritesheet('fire', './src/assets/objects/goblin-fire-64.png', {
+    /** load prop images */
+    this.load.image('deadTree', './src/assets/objects/dead-tree.png');
+    this.load.image('grave', './src/assets/objects/grave.png');
+
+    this.load.spritesheet('goblinFire', './src/assets/objects/goblin-fire-64.png', {
       frameWidth: 82,
       frameHeight: 64,
     });
@@ -112,6 +120,13 @@ export class GameScene extends Phaser.Scene {
       'bushes-background'
     );
 
+    this.grave = new StaticProp({
+      scene: this,
+      x: 250,
+      y: 360,
+      key: 'grave',
+    });
+
     /** create tilesets */
     this.grassTileset = this.darkForestMap.addTilesetImage('grass-tileset');
     this.grassTileLayer = this.darkForestMap.createStaticLayer('grassLayer', this.grassTileset, 0, 0);
@@ -121,16 +136,21 @@ export class GameScene extends Phaser.Scene {
     this.darkForestMap.setCollisionByExclusion([-1], true, false);
     this.collisionTileLayer.visible = false;
 
-    /** create objects */
-    this.fire = this.add.sprite(525, 320, 'fire');
-    this.anims.create({
-      key: 'fire-flicker',
-      frames: this.anims.generateFrameNumbers('fire', { start: 0, end: 2 }),
-      duration: 600,
-      repeat: -1,
+    /** create props */
+
+    this.deadTree = new StaticProp({
+      scene: this,
+      x: 150,
+      y: 225,
+      key: 'deadTree',
     });
 
-    this.fire.anims.play('fire-flicker', true);
+    this.goblinFire = new GoblinFire({
+      scene: this,
+      x: 520,
+      y: 320,
+      key: 'goblinFire',
+    });
 
     /** create characters */
     this.cloak = new Cloak({
