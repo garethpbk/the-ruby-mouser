@@ -1,9 +1,13 @@
+// import character objects
 import { Cloak } from '../characters/cloak';
 import { Goblin } from '../characters/goblin';
 import { GoblinWizard } from '../characters/goblinWizard';
 
-// import props
+// import prop objects
 import { GoblinFire, StaticProp } from '../props';
+
+// import data
+import { goblins } from '../data';
 
 export class GameScene extends Phaser.Scene {
   /** background */
@@ -21,6 +25,9 @@ export class GameScene extends Phaser.Scene {
   private grassTileLayer: Phaser.Tilemaps.StaticTilemapLayer;
   private decorationTileLayer: Phaser.Tilemaps.StaticTilemapLayer;
   private collisionTileLayer: Phaser.Tilemaps.StaticTilemapLayer;
+
+  /** groups */
+  private goblins: Phaser.GameObjects.Group;
 
   /** characters */
   private cloak: Cloak;
@@ -53,9 +60,9 @@ export class GameScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('dark-forest-map', './src/assets/tilesets/dark-forest-map.json');
 
     /** load character images */
-    this.load.spritesheet('cloak', './src/assets/characters/cloak.png', {
-      frameWidth: 32,
-      frameHeight: 48,
+    this.load.spritesheet('cloak', './src/assets/characters/cloak-64.png', {
+      frameWidth: 64,
+      frameHeight: 64,
     });
 
     this.load.spritesheet('goblin', './src/assets/characters/goblin-64.png', {
@@ -152,6 +159,12 @@ export class GameScene extends Phaser.Scene {
       key: 'goblinFire',
     });
 
+    /** create groups */
+    this.goblins = this.add.group({
+      classType: Goblin,
+      runChildUpdate: true,
+    });
+
     /** create characters */
     this.cloak = new Cloak({
       scene: this,
@@ -161,12 +174,16 @@ export class GameScene extends Phaser.Scene {
       key: 'cloak',
     });
 
-    this.goblin = new Goblin({
-      scene: this,
-      x: 650,
-      y: 150,
-      key: 'goblin',
-      player: this.cloak,
+    goblins.forEach(goblin => {
+      const theGoblin = new Goblin({
+        scene: this,
+        x: goblin.x,
+        y: goblin.y,
+        key: 'goblin',
+        player: this.cloak,
+      });
+
+      this.goblins.add(theGoblin);
     });
 
     this.goblinWizard = new GoblinWizard({
@@ -190,8 +207,10 @@ export class GameScene extends Phaser.Scene {
     );
     // cloak collider
     this.physics.add.collider(this.cloak, this.collisionTileLayer);
-    //goblin collider
-    this.physics.add.collider(this.goblin, this.collisionTileLayer);
+    //goblins collider
+    this.goblins.children.each(goblin => {
+      this.physics.add.collider(goblin, this.collisionTileLayer);
+    }, this);
     // goblin wizard collider
     this.physics.add.collider(this.goblinWizard, this.collisionTileLayer);
 
@@ -201,7 +220,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.cloak.update();
-    this.goblin.update();
+    // this.goblin.update();
     this.goblinWizard.update();
 
     // this.mountainsFarBackground.tilePositionX += 0.05;

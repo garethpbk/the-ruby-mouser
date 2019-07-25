@@ -1,6 +1,7 @@
 export class Cloak extends Phaser.GameObjects.Sprite {
   private currentScene: Phaser.Scene;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
+  private activeState: string;
   private walkingSpeed: number;
   private jumpingSpeed: number;
 
@@ -20,6 +21,8 @@ export class Cloak extends Phaser.GameObjects.Sprite {
     this.currentScene = params.scene;
     this.walkingSpeed = 100;
     this.jumpingSpeed = 200;
+
+    this.activeState = 'idle';
   }
 
   private initImage(): void {
@@ -35,8 +38,15 @@ export class Cloak extends Phaser.GameObjects.Sprite {
 
   private initAnims(): void {
     this.currentScene.anims.create({
+      key: 'cloakIdle',
+      frames: this.currentScene.anims.generateFrameNumbers('cloak', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: 1,
+    });
+
+    this.currentScene.anims.create({
       key: 'right',
-      frames: this.currentScene.anims.generateFrameNumbers('cloak', { start: 0, end: 2 }),
+      frames: this.currentScene.anims.generateFrameNumbers('cloak', { start: 0, end: 0 }),
       frameRate: 5,
       repeat: -1,
     });
@@ -46,22 +56,50 @@ export class Cloak extends Phaser.GameObjects.Sprite {
     this.currentScene.cameras.main.startFollow(this);
   }
 
+  private checkActiveState(): string {
+    if (this.body.velocity.x === 0) {
+      return 'idle';
+    } else {
+      return 'running';
+    }
+  }
+
+  private setIdle(): void {
+    this.anims.play('cloakIdle', true);
+  }
+
+  private setRunning(): void {
+    this.anims.play('right', true);
+  }
+
+  private updateActiveState(currentActiveState): void {
+    if (currentActiveState == 'idle') this.activeState = 'idle';
+
+    if (currentActiveState == 'running') this.activeState = 'running';
+  }
+
   update(): void {
     this.handleInput();
+
+    if (this.activeState == 'idle') {
+      this.setIdle();
+    } else if (this.activeState == 'running') {
+      this.setRunning();
+    }
   }
 
   private handleInput(): void {
     if (this.cursors.right.isDown) {
       this.flipX = false;
       this.body.setVelocityX(this.walkingSpeed);
-      this.anims.play('right', true);
+      this.updateActiveState('running');
     } else if (this.cursors.left.isDown) {
       this.flipX = true;
       this.body.setVelocityX(this.walkingSpeed * -1);
-      this.anims.play('right', true);
+      this.updateActiveState('running');
     } else {
       this.body.setVelocityX(0);
-      this.anims.stop();
+      this.updateActiveState('idle');
     }
 
     if (this.cursors.up.isDown && this.body.blocked.down) {

@@ -3,6 +3,9 @@ export class Goblin extends Phaser.GameObjects.Sprite {
   private walkingSpeed: number;
   private activeState: string;
   private hasAttacked: boolean;
+  private hasIdled: boolean;
+  private hasReturned: boolean;
+  private initialX: number;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key);
@@ -20,6 +23,10 @@ export class Goblin extends Phaser.GameObjects.Sprite {
 
     this.activeState = 'idle';
     this.hasAttacked = false;
+    this.hasIdled = false;
+    this.hasReturned = false;
+
+    this.initialX = params.x;
   }
 
   private initImage(): void {
@@ -52,12 +59,19 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     });
   }
 
-  private setIdle(): void {
-    this.anims.playReverse('goblinIdle', true);
-    this.body.setVelocityX(0);
+  private resetActiveState(): void {
+    this.activeState = null;
   }
 
-  private setRunning(direction): void {
+  private setIdle(): void {
+    if (!this.hasIdled) {
+      this.anims.playReverse('goblinIdle', true);
+      this.body.setVelocityX(0);
+      this.hasIdled = true;
+    }
+  }
+
+  private setRunning(direction: string): void {
     this.anims.play('goblinRun', true);
 
     if (direction == 'right') {
@@ -69,6 +83,16 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     }
   }
 
+  private setReturning(direction: string): void {
+    if (this.activeState == 'returning') return;
+
+    this.setIdle();
+
+    setTimeout(() => {
+      this.setRunning(direction);
+    }, 1500);
+  }
+
   private setHasAttacked(): void {
     if (!this.hasAttacked) {
       this.hasAttacked = true;
@@ -78,7 +102,7 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     }
   }
 
-  private setAttacking(direction, distance): void {
+  private setAttacking(direction: string, distance: number): void {
     this.anims.play('goblinAttack', true);
     this.body.setVelocityX(0);
 
@@ -103,8 +127,24 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     return { distance, direction };
   }
 
-  private checkIfPlayerNear(distanceFromPlayer): string {
-    if (distanceFromPlayer > 100) {
+  private getDistanceFromStartingPoint(): number {
+    const xDifference = this.x - this.initialX;
+
+    if (xDifference == 0) {
+      this.hasReturned = true;
+    }
+
+    return xDifference;
+  }
+
+  private checkIfPlayerNear(distanceFromPlayer: Number): string {
+    if (distanceFromPlayer > 50) {
+      const awayFromStartingPoint = this.getDistanceFromStartingPoint();
+
+      if (awayFromStartingPoint !== 0) {
+        return 'returning';
+      }
+
       return 'idle';
     }
 
@@ -115,10 +155,11 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     return 'running';
   }
 
-  private updateActiveState(near): void {
+  private updateActiveState(near: String): void {
     if (near == 'attack') this.activeState = 'attack';
     if (near == 'running') this.activeState = 'running';
     if (near == 'idle') this.activeState = 'idle';
+    if (near == 'returning') this.activeState = 'returning';
   }
 
   update(): void {
@@ -131,6 +172,10 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     }
     if (this.activeState == 'running') {
       this.setRunning(distanceAndDirectionFromPlayer['direction']);
+    }
+    if (this.activeState == 'returning') {
+      const direction = this.getDistanceFromStartingPoint() < 0 ? 'left' : 'right';
+      this.setReturning(direction);
     }
     if (this.activeState == 'attack') {
       this.setAttacking(distanceAndDirectionFromPlayer['direction'], distanceAndDirectionFromPlayer['distance']);
