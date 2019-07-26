@@ -1,7 +1,8 @@
-// import character objects
-import { Cloak } from '../characters/cloak';
-import { Goblin } from '../characters/goblin';
-import { GoblinWizard } from '../characters/goblinWizard';
+// // import character objects
+// import { Cloak } from '../characters/cloak';
+// import { Goblin } from '../characters/goblin-2';
+// import { GoblinWizard } from '../characters/goblinWizard';
+import { Cloak, Goblin, GoblinWizard } from '../characters';
 
 // import prop objects
 import { GoblinFire, StaticProp } from '../props';
@@ -168,8 +169,7 @@ export class GameScene extends Phaser.Scene {
     /** create characters */
     this.cloak = new Cloak({
       scene: this,
-      x: 320,
-      //y: 336,
+      x: 100,
       y: 300,
       key: 'cloak',
     });
@@ -220,7 +220,6 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.cloak.update();
-    // this.goblin.update();
     this.goblinWizard.update();
 
     // this.mountainsFarBackground.tilePositionX += 0.05;

@@ -19,7 +19,7 @@ export class Cloak extends Phaser.GameObjects.Sprite {
 
   private initVariables(params): void {
     this.currentScene = params.scene;
-    this.walkingSpeed = 100;
+    this.walkingSpeed = 200;
     this.jumpingSpeed = 200;
 
     this.activeState = 'idle';
