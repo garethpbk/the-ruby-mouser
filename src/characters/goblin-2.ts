@@ -58,7 +58,7 @@ export class Goblin extends Phaser.GameObjects.Sprite {
       key: 'goblinRun',
       frames: this.currentScene.anims.generateFrameNumbers('goblin', { start: 4, end: 7 }),
       frameRate: 4,
-      repeat: 1,
+      repeat: -1,
     });
 
     this.currentScene.anims.create({
@@ -78,6 +78,7 @@ export class Goblin extends Phaser.GameObjects.Sprite {
         return;
       case 'returning':
         this.isIdle = false;
+        // this.isRunning = false;
         this.isAttacking = false;
         return;
       case 'attacking':
@@ -93,6 +94,7 @@ export class Goblin extends Phaser.GameObjects.Sprite {
     this.anims.playReverse('goblinIdle', true);
     this.body.setVelocityX(0);
 
+    this.flipX = false;
     this.isIdle = true;
   }
 
@@ -112,25 +114,28 @@ export class Goblin extends Phaser.GameObjects.Sprite {
   }
 
   private checkIfHasReturned(distance: number) {
+    console.log(distance);
     /**
      * doesn't hit exactly 0...tweak this
      */
-    if (distance > 0 && distance < 2) {
+    if (distance < 2 && distance > 0) {
       this.isReturning = false;
       this.hasReturned = true;
       // so as not to have to do this
-      this.x = this.initialX;
+      // this.x = this.initialX;
     }
   }
 
   private setReturning(direction: string): void {
-    console.log('is returning');
-    // this.setIdle();
+    // console.log('is returning');
+    this.setIdle();
+    // this.setRunning(direction);
+    // this.resetIs('returning');
 
-    this.setRunning(direction);
-    this.resetIs('returning');
-    // setTimeout(() => {
-    // }, 1500);
+    setTimeout(() => {
+      this.setRunning(direction);
+      this.resetIs('returning');
+    }, 1500);
 
     this.hasReturned = false;
     this.isReturning = true;
