@@ -46,7 +46,7 @@ export class Cloak extends Phaser.GameObjects.Sprite {
 
     this.currentScene.anims.create({
       key: 'right',
-      frames: this.currentScene.anims.generateFrameNumbers('cloak', { start: 0, end: 0 }),
+      frames: this.currentScene.anims.generateFrameNumbers('cloak', { start: 4, end: 11 }),
       frameRate: 5,
       repeat: -1,
     });
